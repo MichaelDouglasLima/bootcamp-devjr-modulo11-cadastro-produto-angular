@@ -14,6 +14,9 @@ import { FormsModule } from '@angular/forms';
 import { LOCALE_ID } from '@angular/core';
 import localePt from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
+import { NavbarComponent } from './navbar/navbar.component';
+import { HomeComponent } from './home/home.component';
+import { CategoriesComponent } from './categories/categories.component';
 
 registerLocaleData(localePt, 'pt');
 
@@ -23,7 +26,10 @@ registerLocaleData(localePt, 'pt');
     HeaderComponent,
     ProductComponent,
     ProductsComponent,
-    FooterComponent
+    FooterComponent,
+    NavbarComponent,
+    HomeComponent,
+    CategoriesComponent
   ],
   imports: [
     BrowserModule,
