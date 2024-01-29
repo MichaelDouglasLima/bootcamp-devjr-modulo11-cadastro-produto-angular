@@ -3,7 +3,7 @@ import { Category } from '../../interfaces/Category';
 import { Product } from '../../interfaces/Product';
 import { CategoryService } from '../../services/category.service';
 import { ProductService } from '../../services/product.service';
-import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-products',
@@ -12,17 +12,23 @@ import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
 })
 export class ProductsComponent {
 
-  categories : Category[] = [];
+  categories: Category[] = [];
 
-  product : Product = { } as Product;
+  product: Product = {} as Product;
 
-  products : Product [] = [];
+  deleteProduct: Product = {} as Product;
 
-  showForm : boolean = false;
+  products: Product[] = [];
 
-  isEditing : boolean = false;
+  showForm: boolean = false;
 
-  constructor(private categoryService: CategoryService, private productService: ProductService) { }
+  isEditing: boolean = false;
+
+  constructor(
+    private categoryService: CategoryService,
+    private productService: ProductService,
+    private modalService: NgbModal
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -45,7 +51,7 @@ export class ProductsComponent {
     );
   }
 
-  saveProduct(save:boolean) {
+  saveProduct(save: boolean) {
     if (save) {
       if (this.isEditing) {
         this.productService.update(this.product).subscribe();
@@ -53,13 +59,13 @@ export class ProductsComponent {
       else {
         this.productService.save(this.product).subscribe({
           next: data => {
-            this.products.push(data);  
+            this.products.push(data);
           }
         });
       }
     }
 
-    this.product = { } as Product;
+    this.product = {} as Product;
     this.showForm = false;
     this.isEditing = false;
   }
@@ -68,15 +74,25 @@ export class ProductsComponent {
     this.showForm = true;
   }
 
-  edit(product:Product) {
+  edit(product: Product) {
     this.product = product;
     this.showForm = true;
     this.isEditing = true;
   }
 
-  delete(product:Product) {
-    // console.log(product);
-    alert(product);
+  delete(modal: any, product: Product) {
+    this.deleteProduct = product;
+    this.modalService.open(modal).result.then(
+      (confirm) => {
+        if (confirm) {
+          this.productService.delete(product).subscribe({
+            next: () => {
+              this.products = this.products.filter(p => p.id !== product.id);
+            }
+          });
+        }
+      }
+    );
   }
 
 }
